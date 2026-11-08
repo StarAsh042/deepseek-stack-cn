@@ -1,38 +1,38 @@
 ---
 name: ds-pr-comments
-description: "Formats and posts GitHub comments written by an agent on the user's behalf, with clear attribution and no leaked secrets. Use whenever you post a PR comment, review reply or dismissal reason, or on /ds-pr-comments."
+description: "格式化并发布 agent 代表用户撰写的 GitHub 评论，注明清晰归属且不泄露密钥。每当发布 PR 评论、评审回复或驳回理由，或调用 /ds-pr-comments 时使用。"
 ---
 
-Make every agent-written comment easy to spot, short and safe to publish.
+让每条 agent 撰写的评论都易于识别、简短且可安全发布。
 
-## Steps
+## 步骤
 
-1. Write the reply. Lead with the conclusion. Cite the code line, check, test or reproduction that supports it. Mark what you verified and what is your opinion.
-2. Put this note at the top, with the reply below it:
+1. 撰写回复。先给结论。引用支撑结论的代码行、检查、test 或复现步骤。标明哪些已验证、哪些是个人判断。
+2. 在顶部放置以下注记，回复置于其下：
 
    ```md
    > [!NOTE]
-   > **<model> responding on behalf of <user>**
+   > **<model> 代表 <user> 回复**
 
-   Reply text starts here.
+   回复正文从这里开始。
    ```
 
-   Use the model name the harness reports. If it reports none, use the harness name. Use the user's name or GitHub login.
-3. Scan the full comment, including quotes and attachments, for secrets, tokens, private paths and personal data. Remove them.
-4. Preview the final Markdown. Confirm the note and the reply render as two separate blocks.
-5. Post the comment.
-6. Confirm GitHub returned the comment or review URL. Print it.
-7. Resolve a review thread only after its reply posted.
+   使用 harness 报告的模型名。若未报告，使用 harness 名称。使用用户的姓名或 GitHub 登录名。
+3. 检查整条评论（含引用和附件）中是否含密钥、token、私有路径和个人数据，并删除。
+4. 预览最终的 Markdown，确认注记与回复渲染为两个独立区块。
+5. 发布评论。
+6. 确认 GitHub 返回了评论或评审 URL，并打印出来。
+7. 仅在回复发布后，才将评审线程标记为已解决。
 
-## Stop when
+## 停止条件
 
-- GitHub returned a URL for each comment you meant to post.
-- A post fails twice. Report the error and do not resolve the thread.
+- 每条待发布评论都拿到了 GitHub 返回的 URL。
+- 某条评论发布失败 2 次。报告错误，且不要将该线程标记为已解决。
 
-## Rules
+## 规则
 
-- Use the note on top-level comments, inline review comments, replies to bots and people, and dismissal reasons.
-- Do not use it in PR descriptions, commit messages or text the user asked to post word for word.
-- One attribution only. No signature, footer, heading or horizontal rule.
-- No thanks, filler or status updates such as "still working on it".
-- Never guess the model name.
+- 在顶层评论、行内评审评论、对机器人和他人的回复，以及驳回理由中都加注记。
+- 不要在 PR 描述、commit 消息或用户要求原样发布的文字中使用它。
+- 只保留一处归属说明。不要签名、页脚、标题或分隔线。
+- 不要致谢、空话或"still working on it"这类状态更新。
+- 绝不猜测模型名。

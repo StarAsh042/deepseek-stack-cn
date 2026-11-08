@@ -1,32 +1,32 @@
 ---
 name: ds-lessons
-description: "Find mistakes agents keep repeating in this repo and turn each into structure that blocks it, preferring types over lint over tests over docs, plus an end-of-session reflection. Use after a user correction, when the same fix comes up twice, at the end of a long session, or for /ds-lessons."
+description: "找出 agent 在本仓库里反复犯的错，把每一类都变成能拦住它的结构，优先用类型、其次 lint、再次测试、最后文档，并在会话结束时做一次复盘。适用于用户纠正之后、同一种修法第二次出现时、长会话结束时，或输入 /ds-lessons 时使用。"
 ---
 
 # ds-lessons
 
-An instruction an agent can skip is a wish. Make repeated mistakes fail loudly instead.
+agent 能绕开的指令只是一句愿望。要让重复的错误响亮地失败。
 
-## Steps
+## 步骤
 
-1. Gather mistakes. Read the current session, recent commits, reverts, review comments, agent instruction files and workaround comments. Group them into classes. A class counts once it happened twice.
-2. For each class, pick the highest level that works:
-   1. Structure: one owner per piece of state, one supported way per task, hidden internals, delete old patterns an agent would copy.
-   2. Types: make the bad state impossible to write.
-   3. Lint or CI check: the error message names the right file, type or function to use. If the bad pattern is already common, fail only on new additions.
-   4. Test: checks behavior, not internals.
-   5. Docs or agent rules: only for judgment calls that cannot be checked. Add a short example of the failure.
-3. Fix the most frequent classes now, one commit each.
-4. Prove each new check. Re-introduce a real past mistake, run the check, and show it fails. Then remove it and show it passes.
-5. Keep a table in the agent instruction file: rule, and what enforces it. If a rule already existed but nothing enforced it, treat it as a repeat and enforce it now.
-6. End-of-session reflection: list what went wrong, what took extra loops and what the user corrected. Route each item to a check, a skill edit or a rule. Drop one-off issues.
+1. 收集错误。通读当前会话、最近的 commit、回滚、评审意见、agent 指令文件以及权宜之计的注释。把它们归成类别；同一类出现两次才算数。
+2. 对每一类，选出能奏效的最高层级：
+    1. 结构：每份状态只有一个归属者，每类任务只有一种受支持的做法，隐藏内部细节，删掉 agent 会照抄的旧模式。
+    2. 类型：让错误状态根本写不出来。
+    3. Lint 或 CI 检查：报错信息要点明该用的文件、类型或函数。若错误模式已经普遍存在，就只对新加的部分报错。
+    4. 测试：检查行为，而不是内部实现。
+    5. 文档或 agent 规则：只用于无法自动检查的判断问题。附一个失败情形的简短例子。
+3. 现在就修掉出现最频繁的类别，一类一个 commit。
+4. 证明每一条新检查有效：重新引入一个真实发生过的旧错，跑检查并展示它失败；再撤掉，展示它通过。
+5. 在 agent 指令文件里维护一张表：规则，以及由什么来强制它。若某条规则早已存在却无人强制，就当作重复错误，现在补上强制手段。
+6. 会话结束复盘：列出哪里出了错、哪里多绕了圈、用户纠正了什么。把每一条归到某个检查、某次技能修改或某条规则。偶发问题直接丢掉。
 
-## Stop when
+## 停止条件
 
-- Each chosen class has an enforcement that you showed failing on a real mistake.
-- Or you have handled the top three classes this session. Note the rest.
+- 每个选中的类别都有强制手段，且你已用真实错误演示过它会失败。
+- 或者本次会话已处理完排名前三的类别。其余的记下来即可。
 
-## Rules
+## 规则
 
-- If the fix is structural, do not also add prose. The prose was the symptom.
-- Report each class with evidence, the level chosen, and why a higher level did not work.
+- 若修法是结构性的，就别再补文字说明。文字本来就是症状。
+- 汇报每一类时带上证据、所选层级，以及更高层级为何行不通。

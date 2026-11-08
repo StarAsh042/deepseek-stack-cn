@@ -1,31 +1,31 @@
 ---
 name: ds-sharpen
-description: "Restate the user's goal, make the task deeper rather than bigger, rewrite the prompt, and optionally attack the plan to find weak spots. Use before starting vague or high-stakes work, for 'sharpen this', 'what am I really asking', 'stress test this plan', or /ds-sharpen."
+description: "重述用户的目标，把任务做深而不是做大，重写提示词，并可选地攻击计划以找出薄弱处。在开始模糊或高风险的工作前，当用户说「打磨一下」「我到底在问什么」「压测一下这个计划」，或输入 /ds-sharpen 时使用。"
 ---
 
 # ds-sharpen
 
-A sharper prompt saves more tokens than any loop. Fix the ask before doing the work.
+打磨过的提示词比任何循环都更省 tokens。动手之前先把要求理清楚。
 
-## Steps
+## 步骤
 
-1. Restate, in your own words, what the user wants and the problem behind it. Keep it to three sentences. If you cannot, ask one question.
-2. Deepen the task. Answer briefly:
-   - What would a top professional do here that the user did not ask for?
-   - What raw material would they start from, instead of a summary?
-   - What methods and tools would they use?
-   - What outside check, not you or the user, would show the result is right? Name a command, test, metric or source.
-3. Rewrite the prompt to ask for exactly that. Keep it no bigger in scope. Leave choices that belong to the user open and list them.
-4. Optional stress test, when the plan is risky or the user asks. Spawn two or three subagents with fresh context and give each the plan and the goal. Ask each to break it and back every finding with a run: a failing test, a probe script, or real command output. Drop findings with no run behind them.
-5. Present the restatement, the rewritten prompt, open choices, and any surviving findings with their commands and output.
+1. 用自己的话重述用户想要什么，以及背后的问题。控制在 3 句话以内。若做不到，就问一个问题。
+2. 把任务做深。简要回答：
+   - 顶尖的专业人士在这里会做哪些用户没要求的事？
+   - 他们会从什么原始材料入手，而不是从一份摘要开始？
+   - 他们会用什么方法和工具？
+   - 有什么外部检验（不是你、也不是用户）能证明结果是对的？说出具体的命令、test、指标或来源。
+3. 据此重写提示词，只要求这些内容。范围不要变大。把该由用户决定的选项留白并列出来。
+4. 可选的压测：当计划有风险或用户要求时再做。开 2 到 3 个全新上下文的 subagent，把计划和目标分别交给它们。让每个 subagent 去推翻计划，并为每条发现附上一次实际运行：失败的 test、探测脚本，或真实的命令输出。丢掉没有运行支撑的发现。
+5. 给出重述、重写后的提示词、待定选项，以及保留下来的发现连同其命令和输出。
 
-## Stop when
+## 停止条件
 
-- The user accepts or edits the rewritten prompt.
-- Or the stress test returns. Do not loop it more than once without the user.
+- 用户接受或修改了重写后的提示词。
+- 或压测返回结果。没有用户参与时，不要重复超过 1 次。
 
-## Rules
+## 规则
 
-- Deeper, not bigger. Do not add features.
-- Do not apply fixes from the stress test. Report them.
-- A finding without output is an opinion. Leave it out.
+- 做深，不做大。不要加功能。
+- 不要落地压测给出的修复。只做报告。
+- 没有输出支撑的发现只是观点。不要写进去。

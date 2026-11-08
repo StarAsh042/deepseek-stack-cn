@@ -1,29 +1,29 @@
 ---
 name: ds-explain
-description: "Explain how a piece of code works, why it is built that way, and what that means, in plain language a person can follow. Use for 'how does X work', 'why is it like this', 'teach me this', onboarding to a subsystem, or /ds-explain."
+description: "用读者能跟得上的通俗语言，讲清一段代码如何工作、为何这样设计，以及这意味着什么。适用于「X 是怎么工作的」「为什么是这样」「教教我这个」、上手某个子系统，或输入 /ds-explain 时使用。"
 ---
 
 # ds-explain
 
-Give one plain account of what a thing is, how it runs, and why it has its current shape, so the reader can change it with confidence.
+用一份通俗的说明讲清某个东西是什么、如何运行、为何是现在的形态，让读者有把握去改动它。
 
-## Steps
+## 步骤
 
-1. Work out what the reader needs. Read the conversation: are they about to change it, review it, debug it, or are they new? Pick the three or four things they should walk away knowing. Skip what they already know.
-2. Size the job. A single function needs one pass. A subsystem across many files can use two to four parallel read-only subagents, each on one angle, then one pass to combine them.
-3. How it works. Read the actual code. Trace the main runtime path from entry point to effect. Note who owns each piece of state and where the boundaries are. Cite files and lines.
-4. Why it is that way. Check commit history, blame, PR descriptions, linked issues and comments near the code. Separate what the record says from what you infer, and label inferences clearly. If no record exists, say so.
-5. Write the explanation. Start with a plain definition in general terms, then tie it to this codebase. Walk through what happens when someone actually uses it. Then the reasons, then the edge cases. Use a small diagram or table when it helps.
-6. Offer to go deeper on one named part.
+1. 弄清读者需要什么。读一遍对话：他们是准备改动、评审、调试，还是刚接触？挑出他们读完应记住的三到四件事。已经知道的就跳过。
+2. 估量工作量。单个函数过一遍即可。跨多个文件的子系统可派两到四个并行的只读 subagent，各查一个角度，再过一遍把它们整合起来。
+3. 弄懂它如何工作。读真实代码。沿主运行时路径从入口追到最终效果。记下每份状态归谁所有、边界在哪里。引用文件与行号。
+4. 弄懂它为何如此。查看 commit 历史、blame、PR 描述、关联 issue 以及代码附近的注释。把记录里写明的与你推断的分开，并清楚标注推断。若没有任何记录，就如实说明。
+5. 撰写说明。先用通俗的一般性定义开头，再联系到当前代码库。走一遍别人真正使用它时会发生什么。接着讲原因，再讲边界情况。有帮助时配一张小图或表格。
+6. 主动提出可就其中一个指名的部分深入讲解。
 
-## Stop when
+## 停止条件
 
-- The reader's question is answered with cited code and sourced reasons.
-- Or you have spent three rounds of searching for the reason with no record. Say the reason is unknown.
+- 读者的问题已用引用到的代码和有出处的理由回答清楚。
+- 或者为找原因已搜了三轮仍无记录。就说明原因未知。
 
-## Rules
+## 规则
 
-- Do not edit code.
-- Every claim about behavior points at a file and line.
-- Never present a guess about intent as fact.
-- Explain ideas, do not list functions.
+- 不要改代码。
+- 每一条关于行为的说法都要指向某个文件和行号。
+- 绝不把对意图的猜测当成事实。
+- 讲清思路，而不是罗列函数。

@@ -1,34 +1,34 @@
 ---
 name: ds-verify-loop
-description: "Run edit, real check, read the actual error, fix the root cause, rerun, until the check passes or the cap is hit. Use when you change code that has tests, a type checker, a build, or a runnable app, or before you claim any fix works. Invoke as /ds-verify-loop."
+description: "反复执行「改动、真实检查、读实际报错、修根因、重跑」，直到检查通过或达到上限。当你改动了带有 test、type checker、build 或可运行应用的代码时，或在你声称任何修复生效之前使用。调用 /ds-verify-loop。"
 ---
 
 # ds-verify-loop
 
-Prove a change works by running the real check and fixing what it reports, not what you expect it to report.
+通过运行真实检查、并修它报出来的问题（而不是你以为它会报的问题），来证明一处改动有效。
 
-## Steps
+## 步骤
 
-1. Pick the check before you edit: the narrowest real command that proves the change, such as one test file, a typecheck, a build, or a run of the app with one request. Write the command down.
-2. Run it once before the edit if you can, so you know the baseline (already failing, already passing, or broken for another reason).
-3. Make the smallest edit that should satisfy the check.
-4. Run the exact command. Read the full error output, including the first error, the file and line, and the stack frame in your code. Do not skim to the last line.
-5. State the root cause in one sentence, based on the output. If you cannot, add one print or log line, or read the failing code, and rerun. Do not guess.
-6. Fix the cause, not the symptom. Do not add a special case for the one input that the test uses.
-7. Rerun the same command. Count this as one iteration.
-8. When the narrow check passes, run the wider one once (the full test suite, the build, or a lint) to catch breakage elsewhere.
-9. Paste the final passing output (the command and its last lines) in your reply or in PROGRESS.md.
+1. 改动之前先选定检查：能证明这处改动的最窄的真实命令，比如单个 test 文件、一次 typecheck、一次 build，或带一个请求跑一遍应用。把命令写下来。
+2. 如果可以，改动前先跑一次，好知道基线（本来就失败、本来就通过，或因别的原因坏掉）。
+3. 做出应能满足该检查的最小改动。
+4. 运行那条一模一样的命令。读完整个报错输出，包括第一条错误、文件名和行号，以及落在你代码里的栈帧。不要只扫最后一行。
+5. 根据输出，用一句话讲明根因。讲不出就加一行 print 或 log，或读一遍出错的代码，然后重跑。不要猜。
+6. 修根因，不要修表象。不要为 test 用的那一个输入加特例。
+7. 重跑同一条命令。这算一轮迭代。
+8. 窄检查通过后，跑一次更宽的检查（完整 test 套件、build 或 lint），以发现别处被破坏的地方。
+9. 把最终通过的输出（命令及其最后几行）粘贴到你的回复里或 PROGRESS.md 里。
 
-## Stop when
+## 停止条件
 
-- The check passes and you have pasted the output. A claim without output does not count.
-- You reach 5 iterations without passing. Stop editing, report the last error, and switch to ds-unstick.
-- The same error appears twice after two different fixes. Switch to ds-unstick now. Do not wait for iteration 5.
+- 检查通过，且你已粘贴输出。没有输出的说法不算数。
+- 达到 5 轮迭代仍未通过。停下改动，汇报最后一次报错，并切换到 ds-unstick。
+- 两次不同修复后同一个错误再次出现。现在就切到 ds-unstick。不要等到第 5 轮。
 
-## Rules
+## 规则
 
-- Never weaken, skip, delete or loosen a test, assertion, type or lint rule to make the check pass. If the test is wrong, say why and ask first.
-- Never mock away the thing under test.
-- Run the real command every time. Do not reason about what it would print.
-- Change one thing per iteration so that you know what fixed it.
-- If no check exists, write the smallest one that fails without your change, then use the loop.
+- 绝不要为了让检查通过而削弱、跳过、删除或放宽 test、断言、type 或 lint 规则。如果 test 本身错了，说明原因并先询问。
+- 绝不要用 mock 把被测对象抹掉。
+- 每次都运行真实命令。不要靠推断它会打印什么。
+- 每轮迭代只改一处，这样你才知道是什么修好了它。
+- 如果根本没有检查，就写一条最小的、少了你的改动就会失败的检查，然后走这个循环。

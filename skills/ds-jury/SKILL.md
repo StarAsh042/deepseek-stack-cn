@@ -1,31 +1,31 @@
 ---
 name: ds-jury
-description: "Gets independent reviews of a change from two or three different models or providers and loops on fixes until they agree. Use when the user says jury, panel review, second opinions, ask other models, or /ds-jury."
+description: "让两三个不同模型或服务方对同一改动各自独立评审，并反复修复直到意见一致。当用户说「陪审团」「小组评审」「征求第二意见」「问问其他模型」，或输入 /ds-jury 时使用。"
 ---
 
-Get two or three independent reviewers to judge the same change, then fix until they agree.
+请两三位独立评审者评判同一改动，然后反复修复直到他们意见一致。
 
-## Steps
+## 步骤
 
-1. Get the work ready first. Answer open PR comments, fix known issues and run the relevant checks. Skip this only if the user wants to throw the code away.
-2. Pick the jurors. Use models the user named. Otherwise pick the strongest available model from two or three different providers, at high reasoning effort.
-3. Find a way to reach them in this harness: team workers or subagents with a model setting, a second agent CLI in the terminal (for example a Codex or Claude CLI), or an API call. If only one model is available, start two or three fresh-context subagents of that model, each with a different persona: correctness, security and edge cases, simplicity and scope.
-4. Write one brief for all jurors: repo path, base SHA, diff command, goal in one sentence, out-of-scope items and check results. Tell them to review only and change nothing.
-5. Ask each juror for: a verdict (APPROVE or CHANGES), a score out of 10 and findings as `id severity file:line claim fix`. Severity is blocker, should or nit.
-6. Run the jurors in parallel. Wait for all of them. A timeout or error is not approval.
-7. Check each finding against the code yourself. Fix the ones you agree with, with the smallest change. Write a one-line reason for each one you reject.
-8. Re-run checks. Start a new round with the same brief, your answers and the new diff.
-9. Report the result. If there is a PR, edit its description and add a table: juror, model, score per round. Write `no score` when a juror gave none. If there is no PR, put the table in your final reply.
+1. 先把工作准备好。回复 PR 里未解决的评论、修掉已知问题、跑相关检查。只有当用户打算丢弃这段代码时才跳过。
+2. 选定评审者。优先用用户点名的模型；否则从两三个不同服务方里各挑当前可用的最强模型，并开到高推理强度。
+3. 想出在当前 harness 里触达它们的办法：带模型设置的团队成员或 subagent、终端里的第二个 agent CLI（例如 Codex 或 Claude CLI），或者一次 API 调用。若只有一个模型可用，就启动两三个该模型的新上下文 subagent，各给一种不同角色：正确性、安全性与边界情况、简洁性与范围。
+4. 给所有评审者写同一份简报：仓库路径、base SHA、diff 命令、一句话目标、不纳入范围的事项、检查结果。告诉他们只评审、不改动任何东西。
+5. 要求每位评审者给出：结论（APPROVE 或 CHANGES）、满分 10 分的评分，以及按 `id severity file:line claim fix` 格式列出的发现。严重程度分为 blocker、should 或 nit。
+6. 并行运行各评审者，等它们全部返回。超时或报错都不算通过。
+7. 自己对照代码逐条核对发现。认同的用最小改动修掉；每条不采纳的写一行理由。
+8. 重跑检查。带上同一份简报、你的答复和新的 diff，开始新一轮。
+9. 汇报结果。若有 PR，就编辑其描述并加一张表：评审者、模型、每轮评分；某位评审者没给分时写 `no score`。若没有 PR，就把表放进最终回复里。
 
-## Stop when
+## 停止条件
 
-- Every juror returns APPROVE with no open blocker or should finding.
-- Three rounds are done. Report the open disagreements, with both sides in two lines each. The user decides.
-- A round returns only nits. Stop without another round.
+- 每位评审者都返回 APPROVE，且没有未解决的 blocker 或 should 级发现。
+- 已完成三轮。列出仍未解决的分歧，正反双方各写两行，由用户定夺。
+- 某一轮只返回 nit 级发现，就此停止，不再开新一轮。
 
-## Rules
+## 规则
 
-- Jurors are read-only. They do not edit, push, comment or start their own subagents.
-- Say which jurors are the same model as each other. Do not claim a provider you did not reach.
-- Never invent a score or verdict.
-- Guard the scope. Decline new features and list them as follow-ups.
+- 评审者只读。它们不编辑、不 push、不评论，也不启动自己的 subagent。
+- 说明哪几位评审者其实用的是同一个模型。不要谎称触达了某个并未触达的服务方。
+- 绝不编造评分或结论。
+- 守住范围。拒绝新功能，把它们列为后续事项。

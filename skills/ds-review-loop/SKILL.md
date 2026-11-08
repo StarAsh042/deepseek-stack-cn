@@ -1,42 +1,42 @@
 ---
 name: ds-review-loop
-description: "Runs an author and a fresh-context reviewer in a loop on the current change until both agree it is correct, for at most four rounds. Use before or after filing a PR, when the user says review loop, get it reviewed, or /ds-review-loop."
+description: "让作者与全新上下文的评审者围绕当前改动循环评审，直到双方一致认为正确，最多 4 轮。在提交 PR 之前或之后，当用户说「评审循环」「找人评审一下」，或输入 /ds-review-loop 时使用。"
 ---
 
-Make a change more correct by letting one fresh reviewer push back until you both agree.
+让一位全新上下文的评审者不断提出质疑，直到双方达成一致，从而把改动打磨得更正确。
 
-## Steps
+## 步骤
 
-1. Scope the change. Run `git status --short`. Do not stash, discard or include unrelated files. Find the base: `git fetch origin`, then `git merge-base HEAD origin/<base branch>`. Use one diff command for every round.
-2. Write the goal and out-of-scope list in two sentences. Run the covering checks. Do not send code that fails them.
-3. Pick the reviewer: a stronger model if the harness can reach one (subagent with a model setting, team worker, second CLI), or else a fresh DeepSeek context with no history. Record which one.
-4. Send this brief:
+1. 界定改动范围。运行 `git status --short`。不要 stash、丢弃或纳入无关文件。找到基线：`git fetch origin`，再执行 `git merge-base HEAD origin/<base branch>`。每一轮都用同一条 diff 命令。
+2. 用 2 句话写下目标和范围外清单。运行覆盖性检查。不要发送未通过检查的代码。
+3. 选定评审者：若 harness 能调用更强的模型（带 model 设置的 subagent、团队 worker、第二个 CLI），就用它；否则用无历史记录的全新 DeepSeek 上下文。记录选了哪一种。
+4. 发送以下简报：
 
    ```
-   Review only. Do not edit, commit, push, comment or start subagents.
+   只做评审。不要编辑文件、commit、push、发评论或启动 subagent。
    Repo: <path>  Base: <sha>  Diff: git diff <sha> [-- <paths>]
    Goal: <goal>  Out of scope: <list>  Checks: <results>
-   Read the code around the diff. Find bugs, broken callers and gaps against the goal.
-   Flag code the goal does not need. Ignore style unless it hides a bug.
-   blocker = goal case is wrong. should = real bug users will hit. nit = anything else.
-   Reply: VERDICT: APPROVE or CHANGES, then one line per finding:
+   读 diff 附近的代码，找出 bug、被改坏的调用方，以及与目标之间的差距。
+   标出目标并不需要的代码。风格问题除非掩盖了 bug，否则一律忽略。
+   blocker = 目标用例本身错了；should = 用户会实际遇到的 bug；nit = 其余一切。
+   回复格式：VERDICT: APPROVE or CHANGES，随后每条发现一行：
    R1 [blocker|should|nit] file:line claim. Fix: suggestion
    ```
 
-5. Wait for the reply. Do not edit the scoped files while the review runs. A timeout or error is not approval.
-6. Judge each finding yourself. Agree: make the smallest fix, preferring to delete or narrow code. Disagree: reply with evidence (file:line, test output). Nit or out of scope: decline in one line.
-7. Keep a ledger: id, severity, outcome, evidence. Re-run checks and `git diff --shortstat`. If the diff grew, cut it back.
-8. For the next round send the brief, the ledger and the changes since the last round. Ask the reviewer to check only open ids and changed code.
+5. 等待回复。评审进行期间不要改动范围内的文件。超时或报错都不算通过。
+6. 逐条自行判断。认同：做最小的修复，优先删除或收窄代码。不认同：附上证据回复（file:line、test 输出）。属于 nit 或超出范围：一句话回绝。
+7. 维护一份台账：id、严重程度、处理结果、证据。重跑检查并执行 `git diff --shortstat`。若 diff 变大，就把它收回去。
+8. 下一轮发送简报、台账以及自上一轮以来的改动。让评审者只检查未结的 id 和变动过的代码。
 
-## Stop when
+## 停止条件
 
-- The reviewer returns APPROVE on the current diff, no blocker or should is open, and you have no concern left.
-- A round returns only nits.
-- Four rounds are done, or one item stays disputed after two exchanges. Report both sides in two or three lines each and let the user decide. This is not approval.
+- 评审者对当前 diff 返回 APPROVE，没有未结的 blocker 或 should，你也不再有疑虑。
+- 某一轮只返回 nits。
+- 完成 4 轮，或某一条在 2 轮往来后仍有争议。用各 2 到 3 行陈述双方理由，交由用户决定。这不等于通过。
 
-## Rules
+## 规则
 
-- One reviewer at a time. Never agree just to end the loop.
-- Do not push during the loop. Push afterward only if the user asked to push or ship.
-- If you update a PR, add: `Reviewed with ds-review-loop: <N> rounds, <reviewer>, verdict <verdict>.`
-- Report rounds, reviewer, fixed and declined findings with reasons, and diff size before and after.
+- 一次只用一位评审者。不要为了结束循环而勉强认同。
+- 循环期间不要 push。只有用户要求 push 或 ship 时，才在循环结束后 push。
+- 若更新了 PR，加上：`Reviewed with ds-review-loop: <N> rounds, <reviewer>, verdict <verdict>.`
+- 报告轮数、评审者、已修复与已回绝的发现及理由，以及改动前后 diff 的大小。

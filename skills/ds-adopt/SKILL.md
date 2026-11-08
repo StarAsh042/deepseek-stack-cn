@@ -1,33 +1,33 @@
 ---
 name: ds-adopt
-description: "Takes over an existing PR, branch or agent thread and finishes its original goal while keeping credit for the first contributors. Use when the user says take over, adopt, pick up or finish this PR, or /ds-adopt."
+description: "接手已有的 PR、branch 或 agent 会话，完成它最初的目标，同时为最初的贡献者保留署名。当用户说「接手、接管、继续或完成这个 PR」或使用 /ds-adopt 时使用。"
 ---
 
-Finish someone else's work as if it were yours, but credit them for what they did.
+把别人的工作当成自己的来完成，但要为他们做过的事保留署名。
 
-## Steps
+## 步骤
 
-1. Read the source PR, branch or thread in full: description, commits, review comments and any later corrections from the user.
-2. Find the real current state: the head SHA, uncommitted changes and open review findings. Treat the handoff notes as hints, not facts.
-3. Write down the original goal in one sentence.
-4. Choose where to work. By default, make a new branch with the original commits on it and add your fixes as separate commits. Continue in place or stack only if the user asked for it.
-5. Run `ds-revive` to bring the work up to date with the base branch.
-6. Fix what is needed to reach the original goal. Simplify where you can, but keep every intended behavior.
-7. Verify on your own. Reproduce the original problem, then show it fixed. Run the real workflow, not only mocked tests. Record the commands and output.
-8. Check the source PR again. It may have changed while you worked.
-9. If a PR is wanted, file it with `ds-pr`, then watch it with `ds-watch-pr`. Use `ds-pr-comments` for any reply.
-10. Report what you inherited, what you changed, how you verified it, how credit was kept and what is still open.
+1. 完整阅读来源 PR、branch 或会话：描述、commits、review 评论，以及用户后来补充的任何更正。
+2. 查清真实的当前状态：head SHA、未提交的改动、未解决的 review 意见。把交接说明当作提示，而不是事实。
+3. 用一句话写下最初的目标。
+4. 选择在哪里继续。默认新建一个包含原有 commits 的 branch，把你的修复作为独立的 commit 追加。只有用户要求时才原地继续或堆叠。
+5. 运行 `ds-revive`，让工作与 base branch 保持同步。
+6. 修复达成最初目标所需的一切。能简化就简化，但保留每一处预期的行为。
+7. 自己独立验证。先复现最初的问题，再展示它已修复。运行真实的工作流，而不只是 mock 测试。记录命令和输出。
+8. 再次查看来源 PR，工作期间它可能已经变化。
+9. 如果需要提交 PR，用 `ds-pr` 发起，再用 `ds-watch-pr` 跟踪；任何回复都用 `ds-pr-comments` 处理。
+10. 报告你继承了什么、改了什么、如何验证、如何保留署名，以及还有哪些未了事项。
 
-## Stop when
+## 停止条件
 
-- The goal is reached, verified and reported.
-- The goal is unclear, or finishing it needs a product decision. Ask the user.
-- Verification fails three times in a row on the same issue. Report the blocker.
+- 目标已达成、已验证并已报告。
+- 目标不清楚，或完成它需要产品决策。询问用户。
+- 同一问题上的验证连续 3 次失败。报告该阻塞点。
 
-## Rules
+## 规则
 
-- Keep the original Git authors and co-author trailers. Name the contributors and link the original PR in the description.
-- If the PR will be squashed, keep human co-author lines in the squash message. Use verified identities only, never guessed emails.
-- Do not defend the old code because it exists. Do not add unrelated features.
-- Do not edit, merge or close the original PR without permission.
-- State plainly what you could not verify.
+- 保留原有的 Git 作者和 co-author trailers。在描述中列出贡献者并链接原 PR。
+- 如果 PR 会被 squash，在 squash message 里保留人工的 co-author 行。只使用经过验证的身份，绝不要凭猜测填写邮箱。
+- 不要因为旧代码存在就替它辩护。不要添加无关的功能。
+- 未经许可，不要编辑、merge 或关闭原 PR。
+- 如实说明哪些内容你无法验证。

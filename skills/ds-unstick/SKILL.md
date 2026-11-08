@@ -1,33 +1,33 @@
 ---
 name: ds-unstick
-description: "Break out of a repeating failure: name the assumption behind all the failed fixes, test it directly, list three other approaches, pick one, and restart clean if needed. Use when the same error or wrong behavior comes back after two fix attempts, or when you notice you are retrying small variations. Invoke as /ds-unstick."
+description: "打破反复失败的循环：找出所有失败修复背后共有的假设，直接验证它，列出 3 种别的方法，选一种，必要时从干净状态重来。当同一个错误或错误行为在两次修复尝试后再次出现，或你发现自己在反复试细小变体时使用。调用 /ds-unstick。"
 ---
 
 # ds-unstick
 
-When two fixes fail the same way, the problem is usually a wrong belief, not a wrong edit. Find that belief and test it.
+两次修复以同样的方式失败时，问题通常出在错误的判断上，而不是错误的改动。找出那个判断并验证它。
 
-## Steps
+## 步骤
 
-1. Stop editing. Do not try a third variation of the same fix.
-2. Write down each failed attempt in one line: what you changed and what happened. Include the exact error text.
-3. Write the assumption that all of those attempts shared. Typical examples: "this file is the one that runs", "the config is loaded", "the function receives a string", "the cache is cleared", "the error comes from my code". Name one, in one sentence.
-4. Test that assumption directly with the cheapest probe that gives a yes or no answer: a print statement, a log line, a `which` or `--version`, a grep for the real call site, a minimal script, or a read of the docs for the exact version installed. Paste the result.
-5. If the assumption is false, you have found the real problem. Plan the fix from the new fact.
-6. If the assumption holds, list 3 different approaches. "Different" means another mechanism, library, layer or data path, not a tweak of the same edit. Give each approach one line on cost and risk.
-7. Pick one approach and say why in one sentence.
-8. Restart from a clean state if the failed attempts left debris: revert them with git (`git stash` or `git checkout -- <files>`), then apply only the chosen approach.
-9. Record the false assumption or the chosen approach in PROGRESS.md (see ds-context-reset) so a later session does not repeat the attempts.
-10. Return to ds-verify-loop with the new approach.
+1. 停止改动。不要再去试同一修复的第三种变体。
+2. 把每次失败的尝试用一行记下来：你改了什么、发生了什么。附上确切的报错文本。
+3. 写出这些尝试共有的假设。典型例子："this file is the one that runs"、"the config is loaded"、"the function receives a string"、"the cache is cleared"、"the error comes from my code"。用一句话点明其中一个。
+4. 用能给出是/否答案的最省事的探针直接验证那个假设：一条 print 语句、一行 log、一次 `which` 或 `--version`、用 grep 找真正的调用点、一个最小脚本，或读一遍所装确切版本的文档。把结果粘贴出来。
+5. 如果假设不成立，你就找到了真正的问题。基于这个新事实来规划修复。
+6. 如果假设成立，列出 3 种不同的方法。"Different" 指换一种机制、库、层或数据路径，而不是把同一处改动微调一下。每种方法用一行说明成本和风险。
+7. 选一种方法，用一句话说明理由。
+8. 如果失败的尝试留下了残留，就从干净状态重来：用 git 撤销它们（`git stash` 或 `git checkout -- <files>`），然后只应用选中的那种方法。
+9. 把不成立的假设或选中的方法记进 PROGRESS.md（见 ds-context-reset），免得后续会话重蹈这些尝试。
+10. 带着新方法回到 ds-verify-loop。
 
-## Stop when
+## 停止条件
 
-- The probe in step 4 explains the failure, or the new approach passes its check.
-- Two rounds of this skill have failed. Stop and report to the user: the attempts, the assumptions you tested, and the evidence. Ask for direction.
+- 第 4 步的探针解释了故障，或新方法通过了它的检查。
+- 本技能已跑了两轮仍失败。停下并向用户汇报：尝试过什么、验证过哪些假设、以及证据。请用户给出方向。
 
-## Rules
+## 规则
 
-- Do not repeat a fix that has already failed, even with small changes.
-- Evidence beats reasoning. If a probe takes a minute, run it.
-- Keep the failed-attempt list, because it is the most useful part of the report.
-- Use a clean state before a new approach, so that old edits cannot hide the result.
+- 不要重复已经失败过的修复，哪怕只做细小改动。
+- 证据胜过推理。探针哪怕要花一分钟，也去跑。
+- 保留失败尝试清单，它是汇报里最有用的部分。
+- 在尝试新方法前先回到干净状态，免得旧改动把结果掩盖掉。

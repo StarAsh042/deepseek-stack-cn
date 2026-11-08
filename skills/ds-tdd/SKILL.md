@@ -1,29 +1,29 @@
 ---
 name: ds-tdd
-description: "Fix a bug by first writing a focused test that fails for the right reason, then making the smallest change that makes it pass. Use when the user asks for TDD or a regression test, when a bug has a cheap local test target, or for /ds-tdd."
+description: "先写一个因正确原因而失败的针对性 test，再做出让它通过的最小改动，以此修复 bug。当用户要求 TDD 或回归测试、某个 bug 有轻量的本地测试目标，或 /ds-tdd 时使用。"
 ---
 
 # ds-tdd
 
-Make the bug executable before touching production code, so the fix is proven, not claimed.
+在改动生产代码之前，先让这个 bug 变成可执行的测试，这样修复是被验证过的，而不是嘴上说说。
 
-## Steps
+## 步骤
 
-1. Pin down the bug: expected behavior, actual behavior, the code path, and the smallest way to reproduce it.
-2. Find the nearest existing test style for that code path. Use it. Do not build a new harness just for this.
-3. Write the smallest test that would have caught the bug. It checks intended behavior, not the current implementation.
-4. Run it. Show the output. It must fail, and fail for the bug, not for a typo or missing import. If not, fix the test first.
-5. Make the smallest production change that gives the intended behavior without breaking nearby contracts.
-6. Run the new test and the surrounding suite. Show the output.
-7. If a clean test is impractical (heavy setup, brittle mocks, production-only state), use the closest runnable check instead: a script, a repro command or a log check. Say why you skipped the test.
+1. 锁定这个 bug：预期行为、实际行为、相关代码路径，以及最小的复现方式。
+2. 找到该代码路径最接近的现有 test 写法，照它来。不要专门为这件事另搭一套测试脚手架。
+3. 写一条本应能抓到这个 bug 的最小 test。它检验的是预期行为，不是当前实现。
+4. 运行它，贴出输出。它必须失败，且是因这个 bug 而失败，不是因为拼写错误或缺了 import。若不是，先修 test。
+5. 做出最小的生产代码改动，实现预期行为，同时不破坏邻近的契约。
+6. 运行新 test 和周边测试套件，贴出输出。
+7. 如果干净的 test 不现实（搭建繁重、mock 脆弱、或只有生产环境才有那种状态），就改用最接近的可运行检查：脚本、复现命令或日志检查。说明为什么跳过了 test。
 
-## Stop when
+## 停止条件
 
-- The new test failed before the fix and passes after it, both shown with output, and the surrounding suite passes.
-- Or after three fix attempts the test still fails. Stop, report what you learned and run /ds-unstick.
+- 新 test 在修复前失败、修复后通过，两者都有输出为证，且周边测试套件通过。
+- 或三次修复尝试后 test 仍然失败。停下，汇报你学到了什么，并运行 /ds-unstick。
 
-## Rules
+## 规则
 
-- Never edit a test to match a wrong implementation.
-- Do not weaken existing assertions without a clear, stated reason.
-- No test beats a bad test: one that mostly tests mocks, depends on timing, or would be deleted right after.
+- 绝不要为了让 test 通过而把它改成迁就错误的实现。
+- 没有明确且已说明的理由，不要削弱现有断言。
+- 宁可没有 test，也不要一条坏 test：那种主要在测 mock、依赖时序，或者写完马上就会被删掉的 test。

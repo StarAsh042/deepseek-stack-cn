@@ -1,29 +1,29 @@
 ---
 name: ds-best-of-n
-description: "Run N independent attempts at the same task in parallel, pick the strongest as the base, and graft the best parts of the others into it. Use when one attempt at a non-trivial artifact could land on the wrong shape, or for /ds-best-of-n, 'try a few versions', 'best of 3'."
+description: "并行运行 N 次针对同一任务的独立尝试，选出最强的一份作为基底，再把其余尝试中最出色的部分嫁接进去。当一次尝试较复杂的产物可能定错结构，或用户说 /ds-best-of-n、「试几个版本」、「3 个里挑最好的」时使用。"
 ---
 
 # ds-best-of-n
 
-One attempt is a sample, not an answer. DeepSeek is cheap enough that three to five attempts usually cost less than one round of fixing a bad first try.
+一次尝试只是一个样本，不是答案。DeepSeek 足够便宜，做 3 到 5 次尝试的代价，通常低于花一轮去修复一个糟糕的首次结果。
 
-## Steps
+## 步骤
 
-1. Frame the task. Write one prompt that every attempt gets unchanged. Write a private rubric of 3 to 6 concrete, checkable criteria. Attempts never see the rubric.
-2. Pick N. Use 3 by default and 5 when the design space is wide. Give each attempt its own output location, such as a git worktree or a separate temp folder.
-3. Spawn N subagents at once with the prompt, the shared context and their output path. Ask each for the artifact plus a short note on alternatives it rejected. If a harness cannot run subagents, run the attempts one after another in fresh contexts.
-4. Check each attempt. Run its build, tests or a quick probe. Record pass or fail with output. Discard attempts that do not run.
-5. Score the survivors against the rubric. Pick the one with the best overall structure as the base. Structure beats polish.
-6. List the specific strong parts of the other attempts: a test, an edge case, a cleaner function. Graft only those into the base. Do not merge whole files.
-7. Re-run the full checks on the grafted result and show the output.
+1. 界定任务。写一份所有尝试都原样收到的同一 prompt。私下写一份 rubric，包含 3 到 6 条具体、可核查的判据。绝不把 rubric 给各尝试看。
+2. 选定 N。默认用 3，设计空间较宽时用 5。给每个尝试各自的输出位置，例如一个 git worktree 或一个单独的临时目录。
+3. 一次性启动 N 个 subagent，给它们同一 prompt、共享 context 和各自的输出路径。要求每个交出产物，并附一段简短说明，列出它放弃的备选方案。如果 harness 无法运行 subagent，就在全新的 context 里依次执行各次尝试。
+4. 检查每个尝试。运行其 build、tests 或一个快速探测。记录通过或失败并附上输出。丢弃无法运行的尝试。
+5. 用 rubric 给存活下来的尝试打分。选整体结构最好的一个作为基底。结构优先于打磨。
+6. 列出其余尝试中具体的亮点：一个 test、一个 edge case、一个更干净的函数。只把这些嫁接到基底上。不要合并整个文件。
+7. 对嫁接后的结果重跑全部检查，并展示输出。
 
-## Stop when
+## 停止条件
 
-- The grafted result passes every check and you have reported base, grafts and scores.
-- Or no attempt passes after one re-run with a clarified prompt. Report what failed.
+- 嫁接后的结果通过所有检查，且你已报告基底、嫁接内容和各项评分。
+- 或者用澄清后的 prompt 重跑一次后仍无尝试通过。报告失败之处。
 
-## Rules
+## 规则
 
-- Never pick by reading the attempt's own summary. Pick by running it.
-- Do not let one attempt see another before scoring.
-- Keep the losing attempts until the final checks pass.
+- 绝不靠阅读尝试自己给出的摘要来挑选，要靠实际运行来选。
+- 打分之前，不要让任何一个尝试看到另一个。
+- 在最终检查通过之前，保留落选的尝试。
