@@ -1,32 +1,32 @@
 ---
 name: ds-blast-radius
-description: "Find what a change could break outside its own diff, then prove the key safety fact by running real code. Use before shipping a risky or untrusted change, for 'what could this break', 'blast radius of X', or /ds-blast-radius."
+description: "找出一次改动在自身 diff 之外可能破坏的东西，再用真实运行的代码证明关键的安全事实。在交付有风险或不可信的改动之前使用，或当用户问「这会弄坏什么」「X 的波及范围」，或输入 /ds-blast-radius 时使用。"
 ---
 
 # ds-blast-radius
 
-Listing callers is easy. The job is finding the breakage that a text search will not show, and proving the change is safe with a run instead of an argument.
+列出调用方很容易。真正的活儿是找出文本搜索发现不了的破坏，并用一次运行、而不是一段论证来证明改动是安全的。
 
-## Steps
+## 步骤
 
-1. Read the change: the diff, the symbols it adds, changes or removes, and the behavior it now has that the diff does not spell out.
-2. Find the one or two facts the change is safe because of, for example "this only removes cache entries that are already expired". Most risk clears if that fact holds. Spend your effort here.
-3. Look where search stops. Read the source of libraries you call at their pinned version. Check timing: async ordering, teardown, retries. Follow data that leaves the code: API responses, database columns, file formats, config, other languages reading the same data.
-4. Grade each key fact by how far you proved it:
-   1. you said so (worthless alone),
-   2. you pointed at a real file and line,
-   3. you traced the failure path and showed it cannot be reached,
-   4. you ran a script or test against the real code that fails loudly if you are wrong,
-   5. you reproduced it in the running app.
-5. Push each key fact to level 4 when it is cheap. Usually that is one small script calling the exact function in question.
-6. Report: the key facts, their proof level with the command and output, any real breakage found, and what stayed unproven.
+1. 读懂这次改动：diff、它新增、修改或删除的符号，以及它现在具备、但 diff 没有写明的行为。
+2. 找出让这次改动之所以安全的一两个事实，例如 "this only removes cache entries that are already expired"。只要该事实成立，大部分风险就消解了。把力气花在这里。
+3. 往搜索够不到的地方看。按锁定版本阅读你所调用库的源码。检查时序：异步顺序、收尾清理、重试。追踪离开代码的数据：API 响应、数据库列、文件格式、config，以及读取同一份数据的其他语言。
+4. 按证明的程度给每个关键事实分级：
+   1. 你口头声称（单独来看毫无价值），
+   2. 指出了真实的文件和行号，
+   3. 追踪了失败路径并证明它无法被触发，
+   4. 针对真实代码跑了脚本或 test，一旦判断错了就会明显失败，
+   5. 在运行中的应用里复现了它。
+5. 代价不高时，把每个关键事实都推到第 4 级。通常就是一个调用目标函数的小脚本。
+6. 报告：关键事实、各自的证明级别与对应命令和输出、发现的任何真实破坏，以及仍未证实的部分。
 
-## Stop when
+## 停止条件
 
-- Every key fact is at level 4 or higher, or you have said why it could not be, and the report is written.
-- Or you found a real break. Report it with the repro and stop.
+- 每个关键事实都达到第 4 级或更高，或已说明为何达不到，且报告已写好。
+- 或者发现了真实的破坏。附上复现步骤报告并停止。
 
-## Rules
+## 规则
 
-- A convincing write-up is not proof. Show output.
-- Do not fix anything here. Hand fixes to the normal flow.
+- 再漂亮的描述也不是证据。拿出输出。
+- 不要在这里修任何东西。把修复交给正常流程。

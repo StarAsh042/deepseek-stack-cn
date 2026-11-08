@@ -1,37 +1,37 @@
 ---
 name: ds-design-audit
-description: "Reviews an existing UI with scores based on evidence, then fixes the highest-impact problems. Use when a page or app screen looks generic, cluttered, or unfinished, or before you ship UI work. Run as /ds-design-audit."
+description: "基于证据给现有 UI 打分，再修复影响最大的问题。当页面或 app 界面看起来千篇一律、杂乱或没做完，或在你交付 UI 工作之前使用。以 /ds-design-audit 运行。"
 ---
 
-Score a UI from what is on the screen, fix the worst problems, and show that the fixes work.
+依据屏幕上实际呈现的内容给 UI 打分，修掉最糟的问题，并证明修复确实生效。
 
-## Steps
+## 步骤
 
-1. Identify the target file or URL and render it. If it does not render, report this and stop. Do not audit from the source code alone.
-2. Take screenshots of the first viewport and the full page at about 1440px and 390px wide. Also capture the hover, focus, empty, loading, and error states where you can.
-3. Read the target's code: tokens, fonts, colors, focus styles, media queries, and copy.
-4. Give each area a score from 1 to 5. Give one line of evidence for each score: something visible or a line of code.
-   - Hierarchy: the main message and action are clear within 3 seconds, and there is one focal point.
-   - Typography: the fonts are paired on purpose, the scale is consistent, and the line length and leading are correct.
-   - Color: there is one dominant color and one accent, the colors are tokens and not scattered hex values, and there are no decorative gradients.
-   - Spacing: the spacing follows a scale, the rhythm is consistent, and the mobile alignment is correct.
-   - States: hover, focus, empty, loading, error, and long-content states all exist.
-   - Accessibility: the contrast is 4.5:1 or higher, the focus rings are visible, the fields have labels, the touch targets are 44px, and reduced motion is respected.
-   - Copy: the copy is specific to the product, with no stock phrases and no placeholder data.
-5. Record each banned default that you see: purple-blue gradients, a default font used for display, emoji used as icons, a centered hero with three identical cards, glassmorphism everywhere, gray text on gray, and generic copy.
-6. Rank the fixes by their impact on users. Put broken accessibility and an unclear main action first. Put decoration last. For each fix, give the file, the change, and the score that it raises.
-7. Apply the top 3 to 5 fixes. Fix the cause in the tokens or in the shared components, not in each instance. Keep the identity, content, and behavior of the product.
-8. Take new screenshots at the same widths and in the same states as in step 2. Score each area again and show the before and after scores side by side.
-9. If an area still has a score of 2 or lower, or a banned default remains, repeat steps 6 to 8 once. Do not do more than two passes.
+1. 确定目标文件或 URL 并把它渲染出来。如果渲染不出来，报告这一点然后停止。不要只靠源码做审查。
+2. 在约 1440px 和 390px 宽下，分别截取首屏和整页。能捕获的话，也截取 hover、focus、empty、loading 和 error 状态。
+3. 读目标的代码：tokens、字体、颜色、focus 样式、media queries 和文案。
+4. 给每个维度打 1 到 5 分。每个分数配一行证据：屏幕上可见的东西，或一行代码。
+   - 层级：3 秒内就能看清主信息和主操作，且只有一个视觉焦点。
+   - 排版：字体是有意搭配的，字阶统一，行宽和行高得当。
+   - 色彩：一个主色加一个强调色，颜色都来自 tokens 而不是散落的 hex 值，且没有装饰性渐变。
+   - 间距：间距遵循一套刻度，节奏统一，移动端对齐正确。
+   - 状态：hover、focus、empty、loading、error 和长内容状态齐备。
+   - 无障碍：对比度不低于 4.5:1，focus rings 可见，字段有 label，触控目标为 44px，并尊重 reduced motion。
+   - 文案：文案贴合产品本身，没有套话，也没有占位数据。
+5. 记下你看到的每一处禁用默认项：紫蓝渐变、默认字体用作展示字体、emoji 当图标、居中的 hero 配三张一模一样的卡片、满屏毛玻璃、灰底灰字，以及泛泛的套话文案。
+6. 按对用户的影响给修复项排序。无障碍缺陷和主操作不清排最前，装饰排最后。每项修复给出文件、改动，以及它能提高的分数。
+7. 应用前 3 到 5 项修复。在 tokens 或共享组件里修根因，不要逐处打补丁。保住产品的辨识度、内容和行为。
+8. 按第 2 步相同的宽度和状态重新截图。给每个维度重新打分，并把前后分数并排列出。
+9. 如果某个维度仍为 2 分或更低，或仍有禁用默认项，就再走一遍第 6 到 8 步。总轮数不要超过两遍。
 
-## Stop when
+## 停止条件
 
-- Two passes are complete, or every area has a score of 3 or higher and no banned default remains.
-- The report shows the before and after scores, the evidence, the fixes that you applied, and the fixes that you did not apply, each with a reason.
+- 两遍已完成，或每个维度都达到 3 分及以上且不再有禁用默认项。
+- 报告列出前后分数、证据、已应用的修复，以及未应用的修复，并逐项说明原因。
 
-## Rules
+## 规则
 
-- Do not give a score without evidence. If you could not see an area, mark it "not checked" and give the reason.
-- Do not change factual copy, prices, claims, or feature behavior without asking.
-- If the brief requires a style that this skill would flag, it is not a fault.
-- If the UI needs a full rebuild, recommend /ds-design. Do not rebuild it in this skill.
+- 没有证据就不要打分。某个维度看不到时，标为 "not checked" 并给出原因。
+- 未经询问，不要改动事实性文案、价格、宣传语或功能行为。
+- 如果需求明确要求了本技能会标记的风格，那不算问题。
+- 如果 UI 需要整体重做，建议改用 /ds-design。不要在本技能里重建。

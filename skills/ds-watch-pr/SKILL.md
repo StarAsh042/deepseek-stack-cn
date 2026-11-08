@@ -1,39 +1,39 @@
 ---
 name: ds-watch-pr
-description: "Watches a pull request through CI and review, fixes real findings and stops when it is ready, merged or blocked. Use when the user asks to watch, monitor or babysit a PR, or /ds-watch-pr."
+description: "在 CI 和评审全程盯守一个 PR，修复真实的发现，并在就绪、已合并或受阻时停下。当用户要求盯守、监控或照看某个 PR，或 /ds-watch-pr 时使用。"
 ---
 
-Keep one PR moving until it is green and reviewed, with as little noise as possible.
+让一个 PR 持续推进，直到检查全绿、评审完成，同时尽量少制造噪音。
 
-The watcher is `scripts/watch_pr.py` in this skill's folder. Call it by absolute path. It needs `python3` and a logged-in `gh`.
+盯守器是本技能目录下的 `scripts/watch_pr.py`。用绝对路径调用它。它需要 `python3` 和已登录的 `gh`。
 
 ```bash
 python3 <skill>/scripts/watch_pr.py <pr> [--repo owner/name] [--until ready|green|any] [--interval 30] [--max-minutes 60]
 ```
 
-It prints one line per new check failure, finished check run, comment or review, then a final `stop:` line. Exit 0 means the condition is met or the PR merged. Exit 1 means you must act. Exit 2 means bad input. `ready` waits for green checks, a mergeable branch and no change request. `green` waits for checks only.
+每出现一条新的检查失败、已结束的检查运行、评论或评审，它就打印一行，最后打印一行 `stop:`。退出码 0 表示条件已满足或 PR 已合并。退出码 1 表示你需要采取行动。退出码 2 表示输入有误。`ready` 等待检查全绿、分支可合并且没有修改请求。`green` 只等待检查。
 
-## Steps
+## 步骤
 
-1. Handle what already exists: failed checks and comments newer than the last push.
-2. Start the watcher. Run it in the harness's background or monitor tool if it has one, so each line wakes you. Otherwise run it as one long foreground command.
-3. On each event, read the source before you change code. Decide if the finding is real.
-4. For a real bug or CI failure: make the smallest fix, run the failing check locally, push, then restart the watcher.
-5. For a false positive or out-of-scope request: reply with a short reason through `ds-pr-comments`, resolve the thread and list it as a follow-up.
-6. Tell real test failures apart from infrastructure flakes. Re-run a flake once before you call it a flake.
-7. If the base branch moved or the branch is behind, rebase, push with `--force-with-lease` and restart.
-8. Before you call the PR ready, `git fetch` and read the PR again. It must not be BEHIND or DIRTY.
+1. 先处理已存在的东西：上次 push 之后出现的失败检查和评论。
+2. 启动盯守器。如果 harness 有后台或监控工具，就在里面运行它，让每行输出都能唤醒你。否则就作为一条长时间运行的前台命令来执行。
+3. 每次收到事件，先读来源再改代码。判断这条发现是否属实。
+4. 若是真实的 bug 或 CI 失败：做最小修复，在本地跑一遍失败的检查，push，然后重启盯守器。
+5. 若是误报或超出范围的请求：通过 `ds-pr-comments` 用一句简短理由回复，resolve 该 thread，并列为后续事项。
+6. 把真实的 test 失败和基础设施 flake 区分开。判定为 flake 之前，先重跑一次。
+7. 如果 base 分支前进了或本分支落后了，就 rebase，用 `--force-with-lease` push，然后重启。
+8. 在判定 PR 就绪之前，先 `git fetch` 并重新读一遍 PR。它不能是 BEHIND 或 DIRTY。
 
-## Stop when
+## 停止条件
 
-- The watcher exits 0. Report the PR as ready, or merged.
-- Five fix-and-push cycles pass without exit 0. Report what still fails.
-- Another PR makes this one obsolete. Stop and ask before closing it.
-- `gh` reports a rate limit. Check `gh api rate_limit` and wait for the reset once. Do not loop.
+- 盯守器以 0 退出。把 PR 报告为就绪或已合并。
+- 五轮「修复—push」循环过去后仍未以 0 退出。汇报还有哪些地方失败。
+- 另一个 PR 让这个 PR 变得多余。停下，关闭之前先询问。
+- `gh` 报告触发 rate limit。查看 `gh api rate_limit`，等一次重置。不要循环重试。
 
-## Rules
+## 规则
 
-- One watcher per PR. Never write your own sleep or polling loop.
-- When an event needs no action, say nothing. No "still waiting" messages.
-- Merge only if the user asked for it. Otherwise report ready.
-- Keep the PR small. Prefer fixes that delete or narrow code.
+- 每个 PR 只用一个盯守器。绝不要自己写 sleep 或轮询循环。
+- 事件无需处理时，什么也别说。不要发「还在等待」之类的消息。
+- 只有用户要求时才合并。否则只报告就绪。
+- 让 PR 保持小巧。优先采用删代码或收窄代码的修复。

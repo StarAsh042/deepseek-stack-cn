@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Watch one GitHub PR and print one line per new event. Needs the gh CLI.
+"""盯守一个 GitHub PR，每出现一条新事件就打印一行。需要 gh CLI。
 
-usage: watch_pr.py <pr> [--repo owner/name] [--until green|ready|any] [--interval 30] [--max-minutes 60]
+用法：watch_pr.py <pr> [--repo owner/name] [--until green|ready|any] [--interval 30] [--max-minutes 60]
 
-Exit codes:
-  0  --until condition met, or the PR merged
-  1  needs action: a check failed, conflicts, changes requested, PR closed,
-     gh kept failing, or the time limit ran out
-  2  bad arguments or unknown PR
+退出码：
+  0  满足 --until 条件，或 PR 已合并
+  1  需要人工处理：检查失败、存在冲突、被要求修改、PR 已关闭、
+     gh 持续报错，或已到时间上限
+  2  参数错误或找不到该 PR
 """
 import argparse
 import json
@@ -25,12 +25,12 @@ def fetch(pr, repo):
     cmd = ["gh", "pr", "view", pr, "--json", FIELDS] + (["--repo", repo] if repo else [])
     out = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
     if out.returncode != 0:
-        raise RuntimeError(out.stderr.strip() or "gh failed")
+        raise RuntimeError(out.stderr.strip() or "gh 调用失败")
     return json.loads(out.stdout)
 
 
 def check_result(c):
-    # CheckRun has status/conclusion; StatusContext has state.
+    # CheckRun 有 status/conclusion；StatusContext 有 state。
     if c.get("__typename") == "StatusContext":
         state = c.get("state", "")
         return "PENDING" if state in ("PENDING", "EXPECTED") else state
@@ -54,42 +54,42 @@ def events(prev, cur):
     out = []
     for name in cur["failed"]:
         if name not in prev["failed"]:
-            out.append(f"check failed: {name}")
+            out.append(f"检查失败：{name}")
     if cur["checks"] and not cur["pending"] and prev["pending"]:
-        out.append(f"checks finished: {len(cur['failed'])} failed of {len(cur['checks'])}")
+        out.append(f"检查结束：{len(cur['checks'])} 项中 {len(cur['failed'])} 项失败")
     for key, note in cur["notes"].items():
         if key not in prev["notes"]:
             who = (note.get("author") or {}).get("login", "?")
             body = " ".join((note.get("body") or "").split())[:120]
-            out.append(f"new {key[0]} by {who}: {body}")
+            out.append(f"新增 {key[0]}（来自 {who}）：{body}")
     return out
 
 
 def outcome(pr, cur, until):
-    """Return (exit_code, reason) when the watch should end, else None."""
+    """满足结束条件时返回 (exit_code, reason)，否则返回 None。"""
     if pr["state"] == "MERGED":
-        return 0, "merged"
+        return 0, "已合并"
     if pr["state"] == "CLOSED":
-        return 1, "closed"
+        return 1, "PR 已关闭"
     if cur["failed"]:
-        return 1, "failed checks: " + ", ".join(cur["failed"])
+        return 1, "检查失败：" + ", ".join(cur["failed"])
     if pr.get("mergeable") == "CONFLICTING" or pr.get("mergeStateStatus") == "DIRTY":
-        return 1, "conflicts with base"
+        return 1, "与 base 分支存在冲突"
     if pr.get("reviewDecision") == "CHANGES_REQUESTED":
-        return 1, "changes requested"
+        return 1, "评审要求修改"
     green = not cur["pending"]
     if until == "green" and green:
-        return 0, "checks green"
+        return 0, "检查全绿"
     if until == "ready" and green:
         if pr.get("mergeStateStatus") == "BEHIND":
-            return 1, "branch is behind base"
+            return 1, "分支落后于 base 分支"
         if pr.get("mergeStateStatus") in ("CLEAN", "HAS_HOOKS", "UNSTABLE"):
-            return 0, "ready: checks green, mergeable"
+            return 0, "就绪：检查全绿且可合并"
     return None
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Watch a GitHub PR until a condition is met.")
+    ap = argparse.ArgumentParser(description="盯守一个 GitHub PR，直到满足指定条件。")
     ap.add_argument("pr")
     ap.add_argument("--repo")
     ap.add_argument("--until", choices=["green", "ready", "any"], default="ready")
@@ -97,7 +97,7 @@ def main(argv=None):
     ap.add_argument("--max-minutes", type=int, default=60)
     a = ap.parse_args(argv)
     if a.interval < 5 or a.max_minutes < 1:
-        ap.error("--interval must be >= 5 and --max-minutes >= 1")
+        ap.error("--interval 必须 >= 5，且 --max-minutes 必须 >= 1")
 
     deadline = time.time() + a.max_minutes * 60
     prev, errors = None, 0
@@ -107,11 +107,11 @@ def main(argv=None):
             errors = 0
         except (RuntimeError, subprocess.TimeoutExpired, json.JSONDecodeError) as e:
             errors += 1
-            print(f"gh error ({errors}/{MAX_GH_ERRORS}): {e}", file=sys.stderr)
+            print(f"gh 报错（{errors}/{MAX_GH_ERRORS}）：{e}", file=sys.stderr)
             if prev is None and "Could not resolve" in str(e):
                 return 2
             if errors >= MAX_GH_ERRORS:
-                print("stop: gh unreachable")
+                print("stop: gh 无法访问")
                 return 1
             time.sleep(a.interval)
             continue
@@ -120,7 +120,7 @@ def main(argv=None):
         for line in new:
             print(line, flush=True)
         if prev is None:
-            print(f"watching {pr['url']} head {pr['headRefOid'][:8]}", file=sys.stderr)
+            print(f"正在盯守 {pr['url']} head {pr['headRefOid'][:8]}", file=sys.stderr)
         if a.until == "any" and new:
             return 0
         done = outcome(pr, cur, a.until)
@@ -129,7 +129,7 @@ def main(argv=None):
             return done[0]
         prev = cur
         time.sleep(a.interval)
-    print("stop: time limit reached")
+    print("stop: 已到时间上限")
     return 1
 
 

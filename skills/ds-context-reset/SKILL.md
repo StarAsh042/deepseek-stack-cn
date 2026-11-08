@@ -1,36 +1,36 @@
 ---
 name: ds-context-reset
-description: "Keep a PROGRESS.md for long tasks and move to a fresh session or subagent that reads only that file when the context gets long or stale. Use when a task spans many steps or sessions, when the model starts repeating itself, forgets earlier facts, or re-tries old fixes, or when the context window is past about half full. Invoke as /ds-context-reset."
+description: "为长任务维护一份 PROGRESS.md，当 context 变长或陈旧时，切到一个只读取该文件的新 session 或 subagent。当任务跨越许多步骤或多个 session、模型开始重复自己、忘记早先的事实、重试旧的修复，或上下文窗口已超过大约过半时使用。以 /ds-context-reset 调用。"
 ---
 
 # ds-context-reset
 
-Store the state of the work in a file, not in the chat, so a fresh context can continue without drift.
+把工作状态存进文件，而不是留在对话里，好让全新的 context 能不跑偏地接着做。
 
-## Steps
+## 步骤
 
-1. At the start of a long task, create PROGRESS.md at the repo root with these sections:
-   - **Goal**: one or two sentences, plus the acceptance check for the whole task.
-   - **Done**: the verified steps, each with the command and result that proved it.
-   - **Next**: the ordered steps that remain. The first item is the exact next action.
-   - **Open questions**: unknowns and decisions that wait for the user.
-   - **Key facts**: paths, commands, versions, gotchas, and approaches that failed (with the reason).
-2. Update PROGRESS.md after every verified step. Do not update it for unverified ones. Commit the code and PROGRESS.md together with a descriptive message.
-3. Watch for reset signals: you repeat an earlier answer, you forget a fact that is in Key facts, you retry a fix that failed, the same file gets reread many times, or the context is more than about half full.
-4. When a signal appears, finish or revert the current step so the tree is in a known state.
-5. Rewrite PROGRESS.md as a complete handoff. A reader who has only this file and the repo must be able to continue. Remove chatter and keep the facts.
-6. Start a fresh session or subagent. Give it one instruction: "Read PROGRESS.md and `git log -5`, run the acceptance check for the last Done item, then do the first item in Next."
-7. In the new context, confirm that the baseline check passes before you make new edits. If it fails, fix that first.
+1. 长任务开始时，在 repo 根目录创建 PROGRESS.md，包含以下小节：
+   - **Goal**: 一两句话，加上整个任务的验收检查。
+   - **Done**: 已验证的步骤，每条附上证明它的命令和结果。
+   - **Next**: 剩余步骤，按顺序排列。第一项就是确切的下一步动作。
+   - **Open questions**: 未知项以及等用户拍板的决策。
+   - **Key facts**: 路径、命令、版本、坑点，以及失败过的做法（附原因）。
+2. 每验证完一步就更新 PROGRESS.md。未验证的不要写进去。把代码和 PROGRESS.md 一起提交，提交信息要写清楚。
+3. 留意重置信号：重复早先的回答、忘记 Key facts 里记着的事实、重试已经失败的修复、同一个文件被反复重读，或上下文已超过大约过半。
+4. 信号出现时，完成或回滚当前步骤，让工作树处于已知状态。
+5. 把 PROGRESS.md 重写成一份完整的交接文档。只读到这份文件和 repo 的人，必须能接着往下做。删掉闲话，只留事实。
+6. 启动一个全新的 session 或 subagent。只给它一条指令："阅读 PROGRESS.md 和 `git log -5`，对 Done 最后一项跑一遍验收检查，然后执行 Next 的第一项。"
+7. 在新的 context 里，做新改动之前先确认基线检查通过。如果失败，先把它修好。
 
-## Stop when
+## 停止条件
 
-- The goal's acceptance check passes and PROGRESS.md shows every item as Done.
-- You have done 3 resets on one Next item without progress. Stop and ask the user, with the file as your report.
+- 目标的验收检查通过，且 PROGRESS.md 里每一项都标为 Done。
+- 在同一个 Next 条目上重置了 3 次仍无进展。停下来问用户，把该文件作为报告附上。
 
-## Rules
+## 规则
 
-- PROGRESS.md holds facts and evidence, not plans that nobody has checked.
-- Keep it under about 150 lines. Move old Done items into a short summary line.
-- Never put secrets or tokens in it.
-- The fresh context reads the file, not the old transcript.
-- Pair with ds-plan-loop for the Next list and with ds-unstick for the failed-approach notes.
+- PROGRESS.md 只放事实和证据，不放没人验证过的计划。
+- 控制在大约 150 行以内。把旧的 Done 条目压成一行简短摘要。
+- 绝不要把密钥或 token 写进去。
+- 新 context 读的是文件，不是旧对话记录。
+- Next 列表配合 ds-plan-loop 使用，失败做法的记录配合 ds-unstick 使用。

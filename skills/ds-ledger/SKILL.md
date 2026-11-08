@@ -1,34 +1,34 @@
 ---
 name: ds-ledger
-description: "Keep a one-row-per-decision log during long or unattended runs, and re-read it before each step so the run does not drift from its goal. Use for multi-phase or autonomous work, work a human will review later, or /ds-ledger."
+description: "在长时间或无人值守的运行中，为每个决定记一行日志，并在每步之前重读一遍，避免运行偏离目标。适用于多阶段或自主推进的工作、之后需要人工复核的工作，或输入 /ds-ledger 时使用。"
 ---
 
 # ds-ledger
 
-A long run forgets its own reasons. A short written ledger keeps the goal in view and lets a reviewer trust the result.
+长时间运行会忘掉自己当初的理由。一份简短的书面台账能让目标始终可见，也让复核者信得过结果。
 
-## Steps
+## 步骤
 
-1. Create one TSV file, for example `.ds-ledger.tsv`, with the header `ts	phase	decision	why	evidence	result`. Put the goal and done condition in the first row.
-2. Before each step, re-read the goal row and the last ten rows. Check that the next step still serves the goal. If it does not, log the drift and correct course.
-3. After each real decision, append one row:
-   - ts: ISO 8601 time.
-   - phase: the phase or workstream.
-   - decision: what you chose or did, one line.
-   - why: the reason in plain words.
-   - evidence: a pointer, never prose. A commit hash, `file:line`, a command and its result, or an artifact path.
-   - result: the outcome, such as "tests pass", "reverted", "open".
-4. Keep each cell on one line with no tabs.
-5. Log reverts and dropped work too, with the reason. Failures are the most useful rows.
-6. At the end, add a summary row and point the user to the file. Commit it only if a reviewer needs it.
+1. 建一个 TSV 文件，例如 `.ds-ledger.tsv`，表头为 `ts	phase	decision	why	evidence	result`。把目标和完成条件写在第一行。
+2. 每一步之前，重读目标行和最近十行。确认下一步仍服务于目标；若不是，记下这次偏离并纠正方向。
+3. 每做出一个实际决定后，追加一行：
+   - ts：ISO 8601 时间。
+   - phase：所在阶段或工作流。
+   - decision：你选了什么、做了什么，一行写完。
+   - why：用大白话写的原因。
+   - evidence：一个可点开的指针，绝不写散文。可以是 commit 哈希、`file:line`、命令及其结果，或产物路径。
+   - result：结果，例如 "tests pass"、"reverted"、"open"。
+4. 每个单元格保持一行，且不含制表符。
+5. 回滚和被放弃的工作也要记，并写明原因。失败是最有价值的行。
+6. 最后加一行汇总，并把文件指给用户。只有复核者需要时才提交它。
 
-## Stop when
+## 停止条件
 
-- The run ends and the summary row is written.
-- If three rows in a row show no progress toward the goal, stop the run and report.
+- 运行结束，且汇总行已写好。
+- 若连续三行都显示目标没有推进，就停止运行并汇报。
 
-## Rules
+## 规则
 
-- Every row needs evidence you can open or rerun. "Looked fine" is not evidence.
-- Write rows the way you would tell a teammate, plain and concrete.
-- Do not rewrite old rows. Append corrections.
+- 每一行都要有能打开或重跑的证据。"Looked fine" 不算证据。
+- 按你向同事口述的方式写每一行，平实、具体。
+- 不要改写旧行。更正用追加的方式。

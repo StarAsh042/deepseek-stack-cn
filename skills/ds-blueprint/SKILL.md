@@ -1,29 +1,29 @@
 ---
 name: ds-blueprint
-description: "Design the types, function signatures and module layout first, agree on that shape, then implement against it. Use when work is non-trivial and coding straight away would lock in the wrong structure, or for /ds-blueprint, 'design this first', 'architect this'."
+description: "先设计好类型、函数签名与模块布局，就这个结构达成一致后再照着实现。当任务较复杂、直接写代码会固化错误的结构时使用，或用于 /ds-blueprint、「先设计一下」「先搭架构」。"
 ---
 
 # ds-blueprint
 
-Fix the shape of the code before writing the bodies, so the model fills in a plan instead of inventing one as it goes.
+在写函数体之前先定好代码的结构，让模型去填充一份既定方案，而不是边写边临时发明。
 
-## Steps
+## 步骤
 
-1. Ground yourself. Read every module the new code will touch. If you cannot explain how they fit together, run /ds-explain first. Skip this only for code with no surrounding system.
-2. Write at least two structurally different sketches. Each sketch is real files with types, signatures, module boundaries and stub bodies that raise "not implemented", plus short pseudocode. Use /ds-best-of-n to produce them in parallel when the design matters.
-3. Compare the sketches. Prefer the one with the smaller public surface that hides more inside. Prefer the one where a change that looks right from a single file is also right for the whole repo. Note what you rejected and why.
-4. Run the type checker or compiler on the chosen sketch. Paste the output. Stubs must compile.
-5. Show the user the chosen sketch and wait for agreement before you fill in bodies. In an unattended run, record the choice with /ds-ledger instead.
-6. Implement one stub at a time. After each, run the type checker and the relevant tests. If the sketch turns out wrong, stop and revise the sketch, not just the body.
-7. Delete leftover stubs, dead sketches and unused types. Grep for "not implemented" to prove none remain.
+1. 先摸清底细。通读新代码会触碰到的每个模块。如果讲不清它们如何衔接，先运行 /ds-explain。只有在代码没有周边系统时才跳过这一步。
+2. 写出至少 2 份结构明显不同的草图。每份草图都是真实文件，含类型、签名、模块边界以及抛出 "not implemented" 的桩函数体，外加简短伪代码。设计要紧时用 /ds-best-of-n 并行产出。
+3. 对比这些草图。优先选公开面更小、把更多东西藏在内部的那份。优先选这样一份：一处改动单看某个文件是对的，放到整个仓库里也对。记下你舍弃了什么以及原因。
+4. 对选定的草图运行 type checker 或编译器。粘贴输出。桩代码必须能编译。
+5. 把选定的草图给用户看，在填充函数体之前等他认可。无人值守运行时，改用 /ds-ledger 记录这个选择。
+6. 一次实现一个桩。每完成一个，就运行 type checker 和相关 tests。如果发现草图本身有问题，停下来修改草图，而不只是改函数体。
+7. 删掉残留的桩、废弃的草图和未使用的类型。用 grep 搜 "not implemented"，确认一个都不剩。
 
-## Stop when
+## 停止条件
 
-- Every stub is implemented, the type checker passes and the tests pass, with output shown.
-- Or the sketch needed three revisions during implementation. Stop and redesign with the user.
+- 所有桩都已实现，type checker 通过、tests 通过，并已展示输出。
+- 或者实现期间草图已经改了 3 次。停下来和用户重新设计。
 
-## Rules
+## 规则
 
-- Signatures change only through step 6's revise path, never silently.
-- Keep each sketch file small enough to read in one pass.
-- Evidence is compiler and test output, not "it should work".
+- 签名只能通过第 6 步的修改路径变更，绝不悄悄改动。
+- 让每份草图文件小到能一口气读完。
+- 证据是编译器和 test 的输出，而不是 "it should work"。

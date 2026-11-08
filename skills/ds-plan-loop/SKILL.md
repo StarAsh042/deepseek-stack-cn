@@ -1,35 +1,35 @@
 ---
 name: ds-plan-loop
-description: "Write a numbered plan with an acceptance check for each step, critique it once in a fresh pass, revise it, then execute one step at a time. Use when a task touches more than one file, has unclear scope, or failed before because steps were missed. Invoke as /ds-plan-loop."
+description: "写一份带编号的计划，每步都配一条验收检查，用全新的一遍视角评审一次，修订后逐步执行。适用于任务涉及多个文件、范围不清，或曾因漏掉步骤而失败时。以 /ds-plan-loop 调用。"
 ---
 
 # ds-plan-loop
 
-Plan before coding, check the plan once, then build the task one verified step at a time.
+编码前先定计划，把计划检查一遍，然后按经过验证的步骤一步步把任务做出来。
 
-## Steps
+## 步骤
 
-1. Restate the goal in one sentence. List the files and commands you expect to touch. Read those files before you plan. Do not plan from memory.
-2. Write a numbered plan. Each step gets one action and one acceptance check that a command or a direct observation can confirm, for example "`npm test -- auth` passes" or "`GET /health` returns 200". Keep each step small enough to verify in a single diff.
-3. Write the plan to a file (PLAN.md, or the PROGRESS.md from ds-context-reset) so later steps and fresh sessions can read it.
-4. Critique the plan in a fresh pass. Reread only the goal and the plan, as a reviewer who did not write it. If you can, run the critique in a subagent or new session. Answer three questions:
-   - Which step is missing (setup, migration, config, tests, cleanup)?
-   - Which assumption has not been checked against the code or docs?
-   - Is there a simpler path that reaches the same goal with fewer steps?
-5. Revise the plan. Check each risky assumption now by reading code or running a command. Do not carry it forward as a guess.
-6. Execute step 1 only. Run its acceptance check and read the real output. Use ds-verify-loop when the check fails.
-7. Mark the step done in the plan file, along with the evidence (command and result). Then move to the next step.
-8. If a step shows that the plan is wrong, stop and revise the remaining steps before continuing. Do not improvise around it.
+1. 用一句话复述目标。列出预计会动到的文件和命令。规划之前先读这些文件。不要凭记忆定计划。
+2. 写一份带编号的计划。每步只含一个动作和一条验收检查，且这条检查要能被命令或直接观察确认，例如 "`npm test -- auth` passes" 或 "`GET /health` returns 200"。每步都要小到能在单个 diff 里验证。
+3. 把计划写进文件（PLAN.md，或 ds-context-reset 用的 PROGRESS.md），方便后续步骤和新会话读取。
+4. 用全新的一遍视角评审计划。只重读目标和计划，把自己当成没写过它的评审者。可以的话，把评审放到 subagent 或新会话里做。回答三个问题：
+   - 缺了哪一步（setup、migration、config、tests、cleanup）？
+   - 哪个假设还没对照代码或文档核实过？
+   - 有没有用更少步骤达到同一目标的更简路径？
+5. 修订计划。现在就通过读代码或跑命令核实每个有风险的假设。别把它当作猜测带进后面。
+6. 只执行第 1 步。跑它的验收检查并读真实输出。检查失败时用 ds-verify-loop。
+7. 在计划文件里把该步标记为完成，附上证据（命令和结果），再进入下一步。
+8. 若某一步表明计划错了，先停下、修订剩余步骤再继续。不要绕着它临场发挥。
 
-## Stop when
+## 停止条件
 
-- Every step is marked done and its check passed, and the original goal holds when you check it end to end.
-- You have done 2 critique rounds. A third round almost never finds anything new, so execute.
-- A step fails its check twice in a row. Switch to ds-unstick.
+- 每一步都标记完成且检查通过，并且从头到尾核对时最初的目标依然成立。
+- 已经做了 2 轮评审。第三轮几乎不会再有新发现，直接执行。
+- 某一步连续两次没通过检查。切到 ds-unstick。
 
-## Rules
+## 规则
 
-- No step without a check. "Looks right" is not a check.
-- Do one step per diff. Do not batch steps to save time.
-- Do not add steps that the goal does not need.
-- Keep the plan short: about 3-10 steps. Split bigger work into separate plans.
+- 没有检查的步骤不允许存在。"Looks right" 不算检查。
+- 一个 diff 只做一步。别为省时间把几步凑在一起。
+- 不要加目标用不上的步骤。
+- 计划要短：大约 3 到 10 步。更大的工作拆成几份独立计划。

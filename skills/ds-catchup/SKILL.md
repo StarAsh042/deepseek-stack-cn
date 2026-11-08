@@ -1,28 +1,28 @@
 ---
 name: ds-catchup
-description: "Give the user a short plain-language catch-up on what changed since their last message, followed by every decision still waiting on them. Use when the user returns after a long or unattended run, asks 'where are we', 'what did I miss', or types /ds-catchup."
+description: "用简短、直白的话告诉用户自上一条消息以来发生了什么变化，再列出所有仍等他拍板的决策。当用户结束长时间或无人值守的运行后回来，问「现在到哪了」「我错过了什么」，或输入 /ds-catchup 时使用。"
 ---
 
 # ds-catchup
 
-Bring the user back up to speed in a minute, and hand them every call only they can make.
+用一分钟让用户重新跟上进度，并把只有他能做的决定全部交给他。
 
-## Steps
+## 步骤
 
-1. Keep this turn read-only. Do not change code, start jobs or post anything.
-2. Collect what happened since the user's last message: your own work, subagent reports, and messages from others. Tool notifications are not user messages.
-3. Check the current state of anything touched: tests, branches, PRs, running jobs. Use fresh command output, not memory. Fix any number that does not match the source and say you fixed it.
-4. Write what changed in under 100 words. Say what it means for the user, for example "the login bug is fixed and its test passes". Leave out hashes, paths and commands unless the user needs one to act.
-5. List decisions waiting on the user. A decision is something only they can do: a product choice, an approval, an irreversible action, or access you lack. Include old ones still open. For each give: what it changes, the evidence, the risk, your recommendation, and "unknown" for missing facts.
-6. If nothing waits on them, say so plainly.
+1. 本轮保持只读。不要改代码、启动任务或发布任何内容。
+2. 收集用户上一条消息之后发生的事：你自己的工作、subagent 的报告，以及其他人的消息。工具通知不算用户消息。
+3. 核对所有被触碰对象的当前状态：tests、branch、PR、正在运行的任务。用最新的命令输出，不要凭记忆。发现与来源不符的数字就改正，并说明你改了。
+4. 用不到 100 词写出变化。说明它对用户意味着什么，例如 "the login bug is fixed and its test passes"。除非用户需要据此行动，否则省略 hash、路径和命令。
+5. 列出等用户拍板的决策。所谓决策，是只有他能做的事：产品取舍、审批、不可逆操作，或你缺少的权限。把仍未关闭的旧决策也列进来。每项给出：它会改变什么、证据、风险、你的建议，缺失的事实标为 "unknown"。
+6. 如果没有等他决定的事，就直说没有。
 
-## Stop when
+## 停止条件
 
-- The catch-up and the decision list are written. One reply, no follow-up work.
+- 进度回顾和决策清单已写好。一条回复搞定，不做后续动作。
 
-## Rules
+## 规则
 
-- Never invent a decision to fill the list.
-- Work you can still do yourself is not a decision for the user.
-- Name things the way the user would, not by internal labels.
-- Short sentences, no jargon.
+- 绝不要为了凑清单而编造一个决策。
+- 你自己还能做的工作，不算用户的决策。
+- 用用户习惯的说法来称呼事物，别用内部标签。
+- 句子要短，不用行话。

@@ -1,36 +1,36 @@
 ---
 name: ds-ship
-description: "Takes a change all the way from code to a merged pull request without supervision: build it, prove it, review it, file the PR, watch it and merge it. Use when the user says ship it, send it all the way, merge when green, or /ds-ship."
+description: "无人监督地把一处改动从代码一路做到合并的 PR：构建、验证、评审、提交 PR、盯守并合并。当用户说「发布它」「一路送到底」「绿了就合并」或 /ds-ship 时使用。"
 ---
 
-Own the work from its current state to a merged PR while nobody is watching.
+在无人盯着的情况下，把工作从当前状态一路负责到 PR 合并。
 
-Only act this way when the user clearly asked for it. The request grants three things: run the tests and app checks the proof needs without asking first, force-push this task's own branch with `--force-with-lease`, and merge once the gate below passes. It grants nothing else.
+只有在用户明确提出要求时才这样做。该请求授予三件事：无需先问就运行验证所需的 test 和应用检查、用 `--force-with-lease` 强推本任务自己的分支、以及在下述门禁通过后合并。除此之外不授予任何权限。
 
-## Steps
+## 步骤
 
-1. If you are on the default branch, create a new branch.
-2. Make the smallest change that meets the goal. Fix the case that was reported, not every case that might exist.
-3. Prove every part of the diff. Reproduce the failure, apply the fix, and run the same reproduction again. Run the checks CI runs. For UI or runtime behavior, run the app and look. Paste the command and its output into your notes.
-4. Review the change with `ds-review-loop`. Re-prove anything the review changed.
-5. Rebase on the latest default branch, then file the PR with `ds-pr`. Add one line that says how you proved it.
-6. Watch the PR with `ds-watch-pr`. Fix real findings and CI failures, prove each fix, push, and watch again.
-7. Check the merge gate on the latest commit. Merge with the repo's usual method. Never use `--admin` or any other bypass.
-8. Report the PR link, merge commit, proof, and every decision you made for the user.
+1. 如果当前在默认分支上，新建一个分支。
+2. 做满足目标的最小改动。只修被报告的那个情况，不要把所有可能存在的情况都修一遍。
+3. 验证 diff 的每一处。先复现故障，应用修复，再跑一遍同样的复现。运行 CI 会跑的那些检查。涉及 UI 或运行时行为时，启动应用亲自查看。把命令及其输出粘贴到你的笔记里。
+4. 用 `ds-review-loop` 评审这处改动。评审改动过的内容要重新验证。
+5. rebase 到最新的默认分支，然后用 `ds-pr` 提交 PR。加一行说明你是如何验证的。
+6. 用 `ds-watch-pr` 盯守 PR。修复真实的问题和 CI 失败，逐一验证每个修复，push 后继续盯守。
+7. 在最新的 commit 上检查合并门禁。用仓库惯用的方式合并。绝不使用 `--admin` 或任何其他绕过手段。
+8. 向用户汇报 PR 链接、merge commit、验证证据，以及你做过的每一个决定。
 
-Merge gate, all true on the latest head: proof covers the full diff, required checks are green, review bots are finished, each finding is fixed or answered with a reason, no human review asks for changes, and the branch is current and mergeable.
+合并门禁（以下在最新 head 上必须全部成立）：验证覆盖整个 diff、必需的检查全绿、评审机器人已结束、每条发现都已修复或给出理由答复、没有人工评审要求修改、且分支是最新的、可合并的。
 
-## Stop when
+## 停止条件
 
-- The PR is merged and the report is written.
-- You cannot prove the change, or the gate cannot pass and you cannot fix it. Ask the user.
-- The next step deletes data, touches production, closes a PR, or pushes another branch. Ask the user.
-- Six fix-and-watch cycles pass without a green gate. Stop and report what blocks it.
+- PR 已合并，且汇报已写好。
+- 你无法验证这处改动，或门禁无法通过且你无法修复。询问用户。
+- 下一步会删除数据、触碰生产环境、关闭 PR 或推送别的分支。询问用户。
+- 六轮「修复—盯守」循环过去后门禁仍不绿。停下并汇报是什么卡住了。
 
-## Rules
+## 规则
 
-- Do not end your turn while checks are pending. Wait with the watcher.
-- Ask with the harness question tool, not a plain message. Put the PR link, the blocker and your recommended option in the question.
-- If no question tool exists or nobody answers, leave the PR open and unmerged, and start your final message with the question.
-- Evidence is output you saw in this session. A claim without output is not proof.
-- Keep scope fixed. Decline extra work from reviews and list it as follow-ups.
+- 检查还在挂起时不要结束本轮。用盯守器等待。
+- 用 harness 的提问工具来问，不要只发一条普通消息。把 PR 链接、卡点和你推荐的选项放进问题里。
+- 如果没有提问工具或无人应答，就让 PR 保持打开、不合并，并在最终消息开头把问题提出来。
+- 证据是你在本次会话里亲眼看到的输出。没有输出支撑的说法不算验证。
+- 保持范围不变。评审里冒出的额外工作要婉拒，并列为后续事项。

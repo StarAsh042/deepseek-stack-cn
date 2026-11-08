@@ -1,42 +1,42 @@
 ---
 name: ds-revive
-description: "Brings an old PR up to date by checking if its idea still fits the current code, then rebasing, reworking or recommending it be closed. Use when asked to rebase, refresh, update or revive a stale PR, or /ds-revive."
+description: "先检查旧 PR 的思路是否仍契合当前代码，再通过 rebase、返工或建议关闭把它更新到最新。当用户要求 rebase、刷新、更新或救活一个陈旧 PR，或输入 /ds-revive 时使用。"
 ---
 
-Update the idea, not only the branch. A clean rebase does not prove the PR still belongs.
+更新的是思路，不只是分支。一次干净的 rebase 并不能证明这个 PR 仍然该存在。
 
-## Steps
+## 步骤
 
-1. Fetch the latest base, the PR head and any related branches.
-2. Record the PR URL, state, base, head branch, head SHA, author, checks and review state. Read the title, body, linked issues, commits, threads and full diff.
-3. Write the PR's goal in one sentence.
-4. Find the merge base. Read what landed on the base branch since then. Search merged and open PRs for the same problem.
-5. Answer each question with evidence (commit, PR or file path):
-   - Has this problem already been solved?
-   - Did the APIs, types, schemas or structure it relies on change?
-   - Was the code it edits moved, deleted or simplified?
-   - Would landing it bring back old behavior or make two ways to do one thing?
-   - Is the benefit still worth the upkeep?
-6. Pick one verdict:
-   - **REVIVE**: goal and shape still fit. Go to step 7.
-   - **REWORK**: goal fits, shape does not. Describe the smallest rewrite and stop, unless the user also asked for the rework.
-   - **CLOSE**: superseded or no longer worth it. Cite the evidence and stop. Do not close it yourself.
-7. For REVIVE: work in a clean worktree at the recorded head. Rebase onto the fresh base. Resolve conflicts by the PR's goal and the base's newer rules.
-8. Run `git range-diff` on the old and new series. Confirm no intended change was lost and nothing already landed came back.
-9. Run the focused checks for the touched area. Mark each failure as real, pre-existing or infrastructure.
-10. Push with `--force-with-lease=<branch>:<old head SHA>`.
-11. Report the verdict first, then base changes, conflicts, push result, checks and the remaining decision with the PR link.
+1. 拉取最新基线、PR head 及所有相关分支。
+2. 记录 PR 的 URL、state、base、head branch、head SHA、author、checks 和 review state。阅读标题、正文、关联 issue、commits、讨论串和完整 diff。
+3. 用一句话写下这个 PR 的目标。
+4. 找到 merge base。查看此后基线分支上合入了什么。在已合并和开放的 PR 中搜索同一问题。
+5. 用证据（commit、PR 或文件路径）回答以下每个问题：
+   - 这个问题是否已经解决？
+   - 它依赖的 API、类型、schema 或结构是否变了？
+   - 它改动的代码是否被移动、删除或简化过？
+   - 合入它是否会带回旧行为，或让同一件事出现两种做法？
+   - 收益是否仍值得后续维护成本？
+6. 选定一种判定：
+   - **REVIVE**：目标与形态仍然契合。转到第 7 步。
+   - **REWORK**：目标契合但形态不契合。写出最小改写方案后停止，除非用户也要求做这次返工。
+   - **CLOSE**：已被取代或不再值得。列出证据后停止。不要自己关闭它。
+7. 对 REVIVE：在记录下来的 head 上用干净的 worktree 工作。rebase 到最新基线。按 PR 的目标和基线的新规则解决冲突。
+8. 对旧、新两组提交运行 `git range-diff`。确认没有丢失预期改动，也没有把已合入的东西带回来。
+9. 运行改动区域的针对性检查。把每个失败标注为真实问题、既有问题或基础设施问题。
+10. 用 `--force-with-lease=<branch>:<old head SHA>` 推送。
+11. 先报告判定，再依次报告基线变化、冲突、推送结果、checks、以及待决事项和 PR 链接。
 
-## Stop when
+## 停止条件
 
-- The report is written after any of the three verdicts.
-- A conflict shows a product or design disagreement. Stop and reconsider the verdict.
-- The lease fails. Fetch again and redo steps 4 to 6 once. If it fails again, report.
+- 三种判定之一给出后，报告已写好。
+- 冲突暴露出产品或设计上的分歧。停下来重新考虑判定。
+- lease 失败。重新 fetch 并把第 4 到 6 步重做 1 次。若再次失败，就报告。
 
-## Rules
+## 规则
 
-- Treat a dirty worktree as the user's. Never stash or discard it.
-- Never merge, close or change the base branch. Never force-push without a lease.
-- No conflicts in Git does not mean the PR is current.
-- Separate facts you checked from your judgment.
-- Post PR comments only when asked, through `ds-pr-comments`.
+- 把有未提交改动的 worktree 视作用户的。绝不 stash 或丢弃它。
+- 绝不 merge、关闭 PR 或改动基线分支。绝不在没有 lease 的情况下强推。
+- Git 没有冲突，不等于这个 PR 仍是最新的。
+- 把核实过的事实与自己的判断分开。
+- 仅在被要求时才通过 `ds-pr-comments` 发布 PR 评论。

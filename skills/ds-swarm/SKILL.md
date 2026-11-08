@@ -1,31 +1,31 @@
 ---
 name: ds-swarm
-description: "Fan out N parallel workers on slices of a job or on a race, collect every result, and return one evidence-backed report. Use for wide coverage, audits, races between approaches or exploration, or for /ds-swarm, 'swarm this', 'split this across workers'."
+description: "把 N 个并行 worker 分派到一项任务的各个切片或一场竞速上，收集每一份结果，返回一份有证据支撑的报告。适用于大范围覆盖、审计、不同方案间的竞速或探索，或 /ds-swarm、「开个蜂群」、「把它拆给多个 worker」。"
 ---
 
 # ds-swarm
 
-Split work that is wide but shallow across parallel workers, then merge their proven results into one report.
+把面广但不深的工作拆给多个并行 worker，再把它们各自验证过的结果合并成一份报告。
 
-## Steps
+## 步骤
 
-1. State the done condition and the report the swarm must return.
-2. Pick the shape. Partition the job into non-overlapping slices, or race N workers on the same brief, or both. For a race, decide up front how you will choose: first pass, rank all, or best one.
-3. Write one brief per worker that stands alone: goal, exact slice, how to verify, what to report. When workers test specific commits, name the exact commit hashes and the measurement method.
-4. Give every worker that writes files its own output location.
-5. Spawn all workers at once. If the harness cannot run subagents, run the briefs one by one in fresh contexts.
-6. Each worker reports PASS, ISSUES or BLOCKED with evidence: commands run and their output. ISSUES lists every provable issue, not just the first.
-7. Collect results. Reject any result with no evidence or the wrong commit and respawn that worker once. A second miss is a recorded gap, not a pass.
-8. Merge into one report: the verdict, each slice or arm with its evidence, gaps, and duplicates merged by root cause.
+1. 写明完成条件，以及蜂群必须返回的那份报告。
+2. 选定形态：把任务切成互不重叠的切片，或让 N 个 worker 拿同一份任务简报竞速，或两者兼用。若是竞速，先定好如何取舍：取第一个通过的、给全部排名、还是选最好的一个。
+3. 为每个 worker 写一份可独立成立的任务简报：目标、确切的切片、如何验证、要报告什么。当 worker 要测试特定 commit 时，写明确切的 commit hash 和测量方法。
+4. 给每个会写文件的 worker 各自独立的输出位置。
+5. 一次性启动所有 worker。如果 harness 无法运行 subagent，就在全新的上下文里逐份执行这些任务简报。
+6. 每个 worker 报告 PASS、ISSUES 或 BLOCKED，并附上证据：跑过的命令及其输出。ISSUES 要列出每一处可证实的问题，而不只是第一处。
+7. 收集结果。凡是没有证据或 commit 不对的结果一律退回，并让该 worker 重跑一次。第二次再出错就记为缺口，不算通过。
+8. 合并成一份报告：结论、每个切片或竞速分支及其证据、缺口，以及按根因归并的重复项。
 
-## Stop when
+## 停止条件
 
-- Every slice has a result or a recorded gap and the report is written.
-- Or a race has a winner under the rule from step 2.
-- Never respawn a worker more than once.
+- 每个切片都有结果或已记录缺口，且报告已写好。
+- 或竞速按第 2 步定下的规则决出了胜者。
+- 任何一个 worker 都不得重跑超过一次。
 
-## Rules
+## 规则
 
-- Workers do not share writable state.
-- A missing slice is never counted as passing.
-- Report what workers proved, not what they claimed.
+- 各 worker 之间不共享可写状态。
+- 缺失的切片绝不计为通过。
+- 报告 worker 证实了什么，而不是它们声称了什么。
